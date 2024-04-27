@@ -60,7 +60,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func main() {
 	g := &Game{
 		fullscreen: false,
-		Flock:      entity.NewFlock(100, &screenSize),
+		Flock:      entity.NewFlock(30, &screenSize),
 	}
 
 	// ebiten.SetFullscreen(true)

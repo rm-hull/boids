@@ -16,9 +16,12 @@ func Zero() *Vector {
 	return &Vector{X: 0, Y: 0}
 }
 
-func (v *Vector) Normalize() Vector {
+func (v *Vector) Normalize() {
 	magnitude := v.Magnitude()
-	return Vector{v.X / magnitude, v.Y / magnitude}
+	if magnitude == 0 || magnitude == 1 {
+		return
+	}
+	v.Divide(magnitude)
 }
 
 func (v *Vector) Magnitude() float64 {
@@ -58,9 +61,25 @@ func (v *Vector) Add(other *Vector) {
 	v.Y += other.Y
 }
 
+func (v *Vector) Subtract(other *Vector) {
+	v.X -= other.X
+	v.Y -= other.Y
+}
+
+func (v *Vector) AddAll(others ...*Vector) {
+	for _, other := range others {
+		v.Add(other)
+	}
+}
+
 func (v *Vector) Scale(factor float64) {
 	v.X *= factor
 	v.Y *= factor
+}
+
+func (v *Vector) Divide(divisor float64) {
+	v.X /= divisor
+	v.Y /= divisor
 }
 
 func (v *Vector) Mod(bounds *Dimension) *Vector {
@@ -72,4 +91,22 @@ func (v *Vector) Mod(bounds *Dimension) *Vector {
 func VectorFrom(direction float64, magnitude float64) *Vector {
 	sin, cos := math.Sincos(direction)
 	return &Vector{X: magnitude * cos, Y: magnitude * sin}
+}
+
+func (v *Vector) Limit(max float64) {
+	if v.SquareDistanceFrom(zero) > (max * max) {
+		v.Normalize()
+		v.Scale(max)
+	}
+}
+
+func Diff(a, b *Vector) *Vector {
+	distance := a.DistanceFrom(b)
+
+	result := &Vector{X: a.X, Y: a.Y}
+	result.Subtract(b)
+	result.Normalize()
+	result.Divide(distance)
+
+	return result
 }
